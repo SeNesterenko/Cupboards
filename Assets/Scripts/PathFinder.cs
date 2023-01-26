@@ -18,9 +18,39 @@ public class PathFinder : MonoBehaviour
         return _availableNodes;
     }
 
-    public Dictionary<Node, Node> GetPath()
+    public List<Node> GetPath(Node destination, Node startNode)
     {
-        return _path;
+        var path = new List<Node> { destination };
+
+        var currentNode = destination;
+        var parentNode = _path[currentNode];
+
+        while (parentNode != null)
+        {
+            path.Add(parentNode);
+
+            currentNode = parentNode;
+            
+            if (CheckParentNodeEqualToCurrentNode(startNode, parentNode, path)) break;
+            
+            parentNode = _path[currentNode];
+
+            if (CheckParentNodeEqualToCurrentNode(startNode, parentNode, path)) break;
+        }
+
+        path.Reverse();
+        return path;
+    }
+
+    private static bool CheckParentNodeEqualToCurrentNode(Node startNode, Node parentNode, List<Node> path)
+    {
+        if (parentNode == startNode)
+        {
+            path.Add(parentNode);
+            return true;
+        }
+
+        return false;
     }
 
     private void DepthFirstSearch(Node previous, Node currentNode)
@@ -32,7 +62,7 @@ public class PathFinder : MonoBehaviour
 
         if (previous != null)
         {
-            _path[previous] = currentNode;
+            _path[currentNode] = previous;
         }
         
         _availableNodes.Add(currentNode);
