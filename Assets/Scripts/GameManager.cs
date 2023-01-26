@@ -5,10 +5,12 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private PathFinder _pathFinder;
     [SerializeField] private MoveController _moveController;
-    
+    [SerializeField] private FileReader _fileReader;
+
     [SerializeField] private List<PlayableSquare> _playableSquares;
     [SerializeField] private List<Node> _nodes;
 
+    private LevelSettings _levelSettings;
     private Node _currentNode;
     private PlayableSquare _currentPlayableSquare;
     private List<Node> _availableNodes;
@@ -24,6 +26,8 @@ public class GameManager : MonoBehaviour
         {
             node.OnSelected += ChangePlayableSquarePosition;
         }
+
+        _levelSettings = _fileReader.GetLevelSettings();
     }
 
     private void ShowAvailableNodes(Node startNode, PlayableSquare playableSquare)
