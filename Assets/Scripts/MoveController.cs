@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MoveController : MonoBehaviour
 {
+    public Action OnWin;
+    
     [SerializeField] private float _duration = 2f;
     
     private float _currentTime;
@@ -48,6 +51,7 @@ public class MoveController : MonoBehaviour
         {
             _playableSquare.SetPosition(_destinationNode);
             Reset();
+            OnWin?.Invoke();
             return;
         }
         

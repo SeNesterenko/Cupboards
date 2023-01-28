@@ -10,11 +10,11 @@ public class GraphController : MonoBehaviour
 
     [SerializeField] private Canvas _mainCanvas;
     [SerializeField] private Canvas _finalPositionsCanvas;
-
-    private LevelSettings _levelSettings;
+    
     private Dictionary<int, Node> _nodes;
     private List<PlayableSquare> _playableSquares;
-    private List<PlayableSquare> _finalPositionsPlayableSquares;
+    private List<ConnectionNodesAndPlayableSquares> _finalPositions;
+    private LevelSettings _levelSettings;
 
     public void Initialize(LevelSettings levelSettings)
     {
@@ -34,6 +34,11 @@ public class GraphController : MonoBehaviour
         return _playableSquares;
     }
 
+    public List<ConnectionNodesAndPlayableSquares> GetFinalPositions()
+    {
+        return _finalPositions;
+    }
+
     private void DrawLine(Node startNode, Node endNode)
     {
         var line = Instantiate(_prefabLine, _mainCanvas.transform);
@@ -49,7 +54,7 @@ public class GraphController : MonoBehaviour
     
     private void CreatePlayableSquares()
     {
-        _finalPositionsPlayableSquares = new List<PlayableSquare>();
+        _finalPositions = new List<ConnectionNodesAndPlayableSquares>();
         _playableSquares = new List<PlayableSquare>();
         
         for (var i = 0; i < _levelSettings.QuantityPlayableSquares; i++)
@@ -60,12 +65,13 @@ public class GraphController : MonoBehaviour
             var color = GenerateColor();
             playableSquare.SetColor(color);
             _playableSquares.Add(playableSquare);
-            
+
             var finalPositionsPlayableSquare = Instantiate(_prefabFinalPositionPlayableSquare, _finalPositionsCanvas.transform);
             finalPositionsPlayableSquare.SetPosition(_nodes[_levelSettings.FinishPositions[i]].Position.anchoredPosition / 2);
             
             finalPositionsPlayableSquare.SetColor(playableSquare.GetColor());
-            _finalPositionsPlayableSquares.Add(finalPositionsPlayableSquare);
+
+            _finalPositions.Add(new ConnectionNodesAndPlayableSquares(_nodes[_levelSettings.FinishPositions[i]], playableSquare));
         }
     }
 

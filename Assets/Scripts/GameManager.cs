@@ -1,15 +1,19 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private PathFinder _pathFinder;
-    [SerializeField] private MoveController _moveController;
+    [SerializeField] private GameObject _winCanvas;
+    [SerializeField] private GameObject _mainCanvas;
+    
     [SerializeField] private FileReader _fileReader;
+    [SerializeField] private PathFinder _pathFinder;
+    
+    [SerializeField] private MoveController _moveController;
     [SerializeField] private GraphController _graphController;
-
-    [SerializeField] private List<PlayableSquare> _playableSquares;
+    [SerializeField] private WinController _winController;
+    
+    private List<PlayableSquare> _playableSquares;
     private Dictionary<int, Node> _nodes;
 
     private LevelSettings _levelSettings;
@@ -27,6 +31,12 @@ public class GameManager : MonoBehaviour
     {
         _nodes = _graphController.GetNodes();
         _playableSquares = _graphController.GetPlayableSquares();
+        
+        var finalPositions = _graphController.GetFinalPositions();
+        _winController.Initialize(finalPositions);
+
+        _winController.OnWin += DisplayWinMode;
+        _moveController.OnWin += InvokeOnWinController;
         
         foreach (var playableSquare in _playableSquares)
         {
@@ -85,6 +95,17 @@ public class GameManager : MonoBehaviour
                 availableNode.Reset();
             }
         }
+    }
+
+    private void InvokeOnWinController()
+    {
+        _winController.CheckPlayableSquaresPositions(_playableSquares);
+    }
+
+    private void DisplayWinMode()
+    {
+        _mainCanvas.SetActive(false);
+        _winCanvas.SetActive(true);
     }
 
     private void OnDestroy()
