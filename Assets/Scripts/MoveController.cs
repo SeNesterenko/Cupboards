@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MoveController : MonoBehaviour
 {
-    public Action OnWin;
+    public Action OnGoalAchieved;
     
     [SerializeField] private float _duration = 2f;
     
@@ -51,7 +51,7 @@ public class MoveController : MonoBehaviour
         {
             _playableSquare.SetPosition(_destinationNode);
             Reset();
-            OnWin?.Invoke();
+            OnGoalAchieved?.Invoke();
             return;
         }
         

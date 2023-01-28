@@ -59,20 +59,26 @@ public class GraphController : MonoBehaviour
         
         for (var i = 0; i < _levelSettings.QuantityPlayableSquares; i++)
         {
-            var playableSquare = Instantiate(_prefabPlayableSquare, _mainCanvas.transform);
-            playableSquare.SetPosition(_nodes[_levelSettings.StartPositions[i]]);
-
-            var color = GenerateColor();
-            playableSquare.SetColor(color);
-            _playableSquares.Add(playableSquare);
-
-            var finalPositionsPlayableSquare = Instantiate(_prefabFinalPositionPlayableSquare, _finalPositionsCanvas.transform);
-            finalPositionsPlayableSquare.SetPosition(_nodes[_levelSettings.FinishPositions[i]].Position.anchoredPosition / 2);
-            
-            finalPositionsPlayableSquare.SetColor(playableSquare.GetColor());
-
-            _finalPositions.Add(new ConnectionNodesAndPlayableSquares(_nodes[_levelSettings.FinishPositions[i]], playableSquare));
+            InstantiatePlayableSquares(i);
         }
+    }
+
+    private void InstantiatePlayableSquares(int i)
+    {
+        var playableSquare = Instantiate(_prefabPlayableSquare, _mainCanvas.transform);
+        playableSquare.SetPosition(_nodes[_levelSettings.StartPositions[i]]);
+
+        var color = GenerateColor();
+        playableSquare.SetColor(color);
+        _playableSquares.Add(playableSquare);
+
+        var finalPositionsPlayableSquare = Instantiate(_prefabFinalPositionPlayableSquare, _finalPositionsCanvas.transform);
+        finalPositionsPlayableSquare.SetPosition(_nodes[_levelSettings.FinishPositions[i]].Position.anchoredPosition / 2);
+
+        finalPositionsPlayableSquare.SetColor(playableSquare.GetColor());
+
+        _finalPositions.Add(
+            new ConnectionNodesAndPlayableSquares(_nodes[_levelSettings.FinishPositions[i]], playableSquare));
     }
 
     private void CreateNodes()

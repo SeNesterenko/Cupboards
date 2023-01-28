@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class PlayableSquare : MonoBehaviour
 {
     public Action<Node, PlayableSquare> OnSelected;
-    public RectTransform Position { get; set; }
+    public RectTransform Position { get; private set; }
 
     [SerializeField] private Node _node;
 

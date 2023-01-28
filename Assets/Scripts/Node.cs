@@ -8,8 +8,7 @@ public class Node : MonoBehaviour
     public Action<Node> OnSelected;
     public bool IsBusy;
     public RectTransform Position { get; private set; }
-    public int Number { get; set; }
-    
+
     [SerializeField] private List<Node> _neighbours;
 
     private Image _color;

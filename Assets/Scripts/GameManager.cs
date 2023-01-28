@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(MoveController))]
+[RequireComponent(typeof(GraphController))]
+[RequireComponent(typeof(WinController))]
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject _winCanvas;
@@ -23,21 +26,23 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _levelSettings = _fileReader.GetLevelSettings();
-        _graphController.Initialize(_levelSettings);
+        InitializeAllFields();
     }
 
-    private void Start()
+    private void InitializeAllFields()
     {
+        _levelSettings = _fileReader.GetLevelSettings();
+        _graphController.Initialize(_levelSettings);
+
         _nodes = _graphController.GetNodes();
         _playableSquares = _graphController.GetPlayableSquares();
-        
+
         var finalPositions = _graphController.GetFinalPositions();
         _winController.Initialize(finalPositions);
 
         _winController.OnWin += DisplayWinMode;
-        _moveController.OnWin += InvokeOnWinController;
-        
+        _moveController.OnGoalAchieved += InvokeOnWinController;
+
         foreach (var playableSquare in _playableSquares)
         {
             playableSquare.OnSelected += ShowAvailableNodes;
@@ -61,17 +66,16 @@ public class GameManager : MonoBehaviour
     {
         FullResetNodes();
         
-        _currentNode = newPositionNode;
-        var starNode = _currentPlayableSquare.GetCurrentNode();
-
-        if (!_availableNodes.Contains(_currentNode))
+        if (!_availableNodes.Contains(newPositionNode))
         {
             _currentNode.ChangeColor(ColorProvider.BlockedNode);
             _currentPlayableSquare = null;
             return;
         }
         
-        var path = _pathFinder.GetPath(newPositionNode, starNode);
+        _currentNode = newPositionNode;
+        var startNode = _currentPlayableSquare.GetCurrentNode();
+        var path = _pathFinder.GetPath(newPositionNode, startNode);
 
         if (_currentPlayableSquare != null)
         {
@@ -110,6 +114,9 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        _winController.OnWin -= DisplayWinMode;
+        _moveController.OnGoalAchieved -= InvokeOnWinController;
+        
         foreach (var playableSquare in _playableSquares)
         {
             playableSquare.OnSelected -= ShowAvailableNodes;
