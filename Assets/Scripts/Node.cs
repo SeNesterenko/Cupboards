@@ -8,6 +8,7 @@ public class Node : MonoBehaviour
     public Action<Node> OnSelected;
     public bool IsBusy;
     public RectTransform Position { get; private set; }
+    public int Number { get; set; }
     
     [SerializeField] private List<Node> _neighbours;
 
@@ -17,6 +18,18 @@ public class Node : MonoBehaviour
     {
         Position = GetComponent<RectTransform>();
         _color = GetComponent<Image>();
+    }
+
+    public void SetPosition(int x, int y)
+    {
+        var position = new Vector2(x, y);
+        Position.anchoredPosition = position;
+        Reset();
+    }
+
+    public void AddNeighbour(Node node)
+    {
+        _neighbours.Add(node);
     }
 
     public List<Node> GetNeighbours()
@@ -36,6 +49,6 @@ public class Node : MonoBehaviour
     
     public void Reset()
     {
-        _color.color = Color.white;
+        _color.color = ColorProvider.DefaultNode;
     }
 }

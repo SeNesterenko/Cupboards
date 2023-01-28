@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,9 +7,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PathFinder _pathFinder;
     [SerializeField] private MoveController _moveController;
     [SerializeField] private FileReader _fileReader;
+    [SerializeField] private GraphController _graphController;
 
     [SerializeField] private List<PlayableSquare> _playableSquares;
-    [SerializeField] private List<Node> _nodes;
+    private Dictionary<int, Node> _nodes;
 
     private LevelSettings _levelSettings;
     private Node _currentNode;
@@ -17,6 +19,15 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        _levelSettings = _fileReader.GetLevelSettings();
+        _graphController.Initialize(_levelSettings);
+    }
+
+    private void Start()
+    {
+        _nodes = _graphController.GetNodes();
+        _playableSquares = _graphController.GetPlayableSquares();
+        
         foreach (var playableSquare in _playableSquares)
         {
             playableSquare.OnSelected += ShowAvailableNodes;
@@ -24,10 +35,8 @@ public class GameManager : MonoBehaviour
 
         foreach (var node in _nodes)
         {
-            node.OnSelected += ChangePlayableSquarePosition;
+            node.Value.OnSelected += ChangePlayableSquarePosition;
         }
-
-        _levelSettings = _fileReader.GetLevelSettings();
     }
 
     private void ShowAvailableNodes(Node startNode, PlayableSquare playableSquare)
@@ -87,7 +96,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var node in _nodes)
         {
-            node.OnSelected -= ChangePlayableSquarePosition;
+            node.Value.OnSelected -= ChangePlayableSquarePosition;
         }
     }
 }
