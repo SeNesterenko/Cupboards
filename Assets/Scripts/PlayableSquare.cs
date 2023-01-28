@@ -6,7 +6,7 @@ public class PlayableSquare : MonoBehaviour
 {
     public Action<Node, PlayableSquare> OnSelected;
     public RectTransform Position { get; set; }
-    
+
     [SerializeField] private Node _node;
 
     private Image _background;
@@ -29,6 +29,16 @@ public class PlayableSquare : MonoBehaviour
         Position.anchoredPosition = _node.Position.anchoredPosition;
     }
 
+    public void SetPosition(Vector2 position)
+    {
+        Position.anchoredPosition = position;
+    }
+
+    public Color GetColor()
+    {
+        return _background.color;
+    }
+    
     public void SetColor(Color color)
     {
         _background.color = color;

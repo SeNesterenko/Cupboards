@@ -5,19 +5,22 @@ public class GraphController : MonoBehaviour
 {
     [SerializeField] private Node _prefabNode;
     [SerializeField] private PlayableSquare _prefabPlayableSquare;
-    [SerializeField] private Canvas _canvas;
     [SerializeField] private LineRenderer _prefabLine;
-    
-    
+    [SerializeField] private PlayableSquare _prefabFinalPositionPlayableSquare;
+
+    [SerializeField] private Canvas _mainCanvas;
+    [SerializeField] private Canvas _finalPositionsCanvas;
+
     private LevelSettings _levelSettings;
     private Dictionary<int, Node> _nodes;
     private List<PlayableSquare> _playableSquares;
+    private List<PlayableSquare> _finalPositionsPlayableSquares;
 
     public void Initialize(LevelSettings levelSettings)
     {
         _levelSettings = levelSettings;
         
-        CrateNodes();
+        CreateNodes();
         CreatePlayableSquares();
     }
 
@@ -33,7 +36,7 @@ public class GraphController : MonoBehaviour
 
     private void DrawLine(Node startNode, Node endNode)
     {
-        var line = Instantiate(_prefabLine, _canvas.transform);
+        var line = Instantiate(_prefabLine, _mainCanvas.transform);
         line.material.color = ColorProvider.LineColor;
         var lineIndex = 0;
         
@@ -46,26 +49,33 @@ public class GraphController : MonoBehaviour
     
     private void CreatePlayableSquares()
     {
+        _finalPositionsPlayableSquares = new List<PlayableSquare>();
         _playableSquares = new List<PlayableSquare>();
         
         for (var i = 0; i < _levelSettings.QuantityPlayableSquares; i++)
         {
-            var playableSquare = Instantiate(_prefabPlayableSquare, _canvas.transform);
+            var playableSquare = Instantiate(_prefabPlayableSquare, _mainCanvas.transform);
             playableSquare.SetPosition(_nodes[_levelSettings.StartPositions[i]]);
 
             var color = GenerateColor();
             playableSquare.SetColor(color);
             _playableSquares.Add(playableSquare);
+            
+            var finalPositionsPlayableSquare = Instantiate(_prefabFinalPositionPlayableSquare, _finalPositionsCanvas.transform);
+            finalPositionsPlayableSquare.SetPosition(_nodes[_levelSettings.FinishPositions[i]].Position.anchoredPosition / 2);
+            
+            finalPositionsPlayableSquare.SetColor(playableSquare.GetColor());
+            _finalPositionsPlayableSquares.Add(finalPositionsPlayableSquare);
         }
     }
 
-    private void CrateNodes()
+    private void CreateNodes()
     {
         _nodes = new Dictionary<int, Node>();
 
         for (var i = 0; i < _levelSettings.QuantityNodes; i++)
         {
-            var node = Instantiate(_prefabNode, _canvas.transform);
+            var node = Instantiate(_prefabNode, _mainCanvas.transform);
             node.SetPosition(_levelSettings.NodePositions[i].X, _levelSettings.NodePositions[i].Y);
             _nodes[i+1] = node;
         }

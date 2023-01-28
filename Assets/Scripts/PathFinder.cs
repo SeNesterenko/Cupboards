@@ -75,9 +75,9 @@ public class PathFinder : MonoBehaviour
 
     private void ChangeFreeNodesColor()
     {
-        for (var i = 1; i < _availableNodes.Count; i++)
+        foreach (var t in _availableNodes)
         {
-            _availableNodes[i].ChangeColor(ColorProvider.AvailableNode);
+            t.ChangeColor(ColorProvider.AvailableNode);
         }
     }
 }
